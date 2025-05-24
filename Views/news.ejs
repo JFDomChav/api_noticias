@@ -1,0 +1,28 @@
+<table id="tableRes">
+    <%
+        if (articles.length != 0) {
+            for(let i=0; i<articles.length; i++){
+                let article = articles[i];
+    %>
+            <tr>
+                <td colspan="2"><a href="<%= article.url %>">
+                    <div class="news-item">
+                        <img src="<%= article.image %>" class="news-image">
+                        <div class="news-details">
+                            <div class="news-title"><%= article.title %></div>
+                            <div class="news-date"><%= article.publishedAt %></div>
+                            <div class="news-description"><%= article.description %></div>
+                        </div>
+                    </div></a>
+                </td>
+            </tr>
+    <%
+            }
+        }else{
+    %>
+                <h1>No hay noticias para la configuración deseada</h1> 
+    <%
+        }
+    %>
+</table>
+
