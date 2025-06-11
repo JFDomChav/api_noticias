@@ -14,6 +14,73 @@ class API_NEWS{
         return url;
     }
 }
+// Clase para la informacion de la busqueda
+class Search_new_info{
+    /*
+     let KEYWORDS = (req.query.q != undefined) ? req.query.q : null
+    let category = (req.query.category != undefined) ? req.query.category : null
+    let LANG = (req.query.lang != undefined) ? req.query.lang : null
+    let COUNTRY = (req.query.country != undefined) ? req.query.country : null
+    let FROM = (req.query.from != undefined) ? req.query.from : null
+    let TO = (req.query.to != undefined) ? req.query.to : null
+    */
+    constructor(){
+        this.KEYWORDS = null;
+        this.category = null;
+        this.LANG = null;
+        this.COUNTRY = null;
+        this.FROM = null;
+        this.TO = null;
+    }
+    
+    get keywords() {
+        return this.KEYWORDS;
+    }
+
+    set keywords(value) {
+        this.KEYWORDS = (value != undefined) ? value : null;
+    }
+
+    get category() {
+        return this.category;
+    }
+
+    set category(value) {
+        this.category = (value != undefined) ? value : null;
+    }
+
+    get lang() {
+        return this.LANG;
+    }
+
+    set lang(value) {
+        this.LANG = (value != undefined) ? value : null;
+    }
+
+    get country() {
+        return this.COUNTRY;
+    }
+
+    set country(value) {
+        this.COUNTRY = (value != undefined) ? value : null;
+    }
+
+    get from() {
+        return this.FROM;
+    }
+
+    set from(value) {
+        this.FROM = (value != undefined) ? value : null;
+    }
+
+    get to() {
+        return this.TO;
+    }
+
+    set to(value) {
+        this.TO = (value != undefined) ? value : null;
+    }
+}
 // Configuraciones
 const express = require('express')
 const https = require('https');
@@ -33,25 +100,27 @@ app.get('/', (req, res) => {
     res.render('search')
 })
 app.get('/search', async (req, res) =>{
-    let KEYWORDS = (req.query.q != undefined) ? req.query.q : null
-    let category = (req.query.category != undefined) ? req.query.category : null
-    let LANG = (req.query.lang != undefined) ? req.query.lang : null
-    let COUNTRY = (req.query.country != undefined) ? req.query.country : null
-    let FROM = (req.query.from != undefined) ? req.query.from : null
-    let TO = (req.query.to != undefined) ? req.query.to : null
+    Search_info = Search_new_info();
+    Search_info.KEYWORDS = req.query.q;
+    Search_info.category = req.query.category;
+    Search_info.LANG = req.query.lang;
+    Search_info.COUNTRY = req.query.country;
+    Search_info.FROM = req.query.from;
+    Search_info.TO = req.query.to;
+    
     let articles;
-    if(req.query.q != undefined){
-        articles = await obtenerRecursos(KEYWORDS, LANG, COUNTRY, FROM, TO, false, category);
+    if(Search_info.KEYWORDS != null){
+        articles = await obtenerRecursos(Search_info, false);
     }else if(req.query.category != undefined){
-        articles = await obtenerRecursos(KEYWORDS, LANG, COUNTRY, FROM, TO, true, category);
+        articles = await obtenerRecursos(Search_info, true);
     }
     res.render('news', {articles: articles}
     );
 })
 // Funciones
-async function obtenerRecursos(keyword, lang, country, from, to, top_news, category) {
+async function obtenerRecursos(Search_info, top_news) {
     const NEWS = new API_NEWS();
-    url = NEWS.get_url(keyword, lang, country, from, to, top_news, category)
+    url = NEWS.get_url(Search_info.KEYWORDS, Search_info.LANG, Search_info.COUNTRY, Search_info.FROM, Search_info.TO, top_news, Search_info.category)
     try {
         respuesta = await axios.get(url);
         return respuesta.data.articles;
